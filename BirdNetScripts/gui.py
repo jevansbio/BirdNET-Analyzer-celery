@@ -5,9 +5,9 @@ import webview
 
 from multiprocessing import Pool, freeze_support
 
-import config as cfg
-import analyze
-import model
+from . import  config as cfg
+from . import  analyze
+from . import  model
 
 def registerWindow(window):
 

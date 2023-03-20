@@ -10,9 +10,9 @@ from multiprocessing import Pool, freeze_support
 
 import numpy as np
 
-import config as cfg
-import audio
-import model
+from . import config as cfg
+from . import  audio
+from . import  model
 
 def clearErrorLog():
 
@@ -304,7 +304,9 @@ def analyzeFile(item):
         # We have to check if output path is a file or directory
         if not cfg.OUTPUT_PATH.rsplit('.', 1)[-1].lower() in ['txt', 'csv']:
 
-            rpath = fpath.replace(cfg.INPUT_PATH, '')
+            rpath = fpath.replace(cfg.OUTPUT_PATH, '')
+            
+            print(rpath)
             rpath = rpath[1:] if rpath[0] in ['/', '\\'] else rpath
 
             # Make target directory if it doesn't exist
@@ -318,8 +320,11 @@ def analyzeFile(item):
                 rtype = '.BirdNET.results.txt'
             else:
                 rtype = '.BirdNET.results.csv'
-            saveResultFile(results, os.path.join(cfg.OUTPUT_PATH, rpath.rsplit('.', 1)[0] + rtype), fpath)
+            outputpath=os.path.join(cfg.OUTPUT_PATH, rpath.rsplit('.', 1)[0] + rtype)
+            saveResultFile(results, outputpath , fpath)
+            
         else:
+            outputpath=cfg.OUTPUT_PATH
             saveResultFile(results, cfg.OUTPUT_PATH, fpath)        
     except:
 
@@ -335,8 +340,83 @@ def analyzeFile(item):
     delta_time = (datetime.datetime.now() - start_time).total_seconds()
     print('Finished {} in {:.2f} seconds'.format(fpath, delta_time), flush=True)
 
-    return True
+    return True, outputpath
 
+class argsclass():
+    def __init__(self,args):
+        self.i=args.get("i","/example/")
+        self.o=args.get("o","/example/")
+        self.lat=args.get("lat",-1)
+        self.lon=args.get("lon",-1)
+        self.week=args.get("week",-1)
+        self.slist=args.get("slist","")
+        self.sensitivity=args.get("sensitivity",1.0)
+        self.min_conf=args.get("min_conf",0.1)
+        self.overlap=args.get("overlap",0.0)
+        self.rtype=args.get("rtype","csv")
+        self.locale=args.get("locale","en")
+        self.sf_thresh=args.get("sf_thresh",0.03)
+
+def RunAnalysis(args):
+
+    args=argsclass(args)
+    
+    # Load eBird codes, labels
+    cfg.CODES = loadCodes()
+    cfg.LABELS = loadLabels(cfg.LABELS_FILE)
+    
+    cfg.CODES = loadCodes()
+    cfg.LABELS = loadLabels(cfg.LABELS_FILE)
+    
+    
+    # Load translated labels
+    lfile = os.path.join(cfg.TRANSLATED_LABELS_PATH, os.path.basename(cfg.LABELS_FILE).replace('.txt', '_{}.txt'.format(args.locale)))
+    if not args.locale in ['en'] and os.path.isfile(lfile):
+        cfg.TRANSLATED_LABELS = loadLabels(lfile)
+    else:
+        cfg.TRANSLATED_LABELS = cfg.LABELS
+
+    # Set input and output path    
+    cfg.INPUT_PATH = args.i
+    cfg.OUTPUT_PATH = args.o
+
+    # Parse input files
+    if os.path.isdir(cfg.INPUT_PATH):
+        cfg.FILE_LIST = parseInputFiles(cfg.INPUT_PATH)  
+    else:
+        cfg.FILE_LIST = [cfg.INPUT_PATH]        
+
+    print(cfg.INPUT_PATH)
+
+    # Set confidence threshold
+    cfg.MIN_CONFIDENCE = max(0.01, min(0.99, float(args.min_conf)))
+
+    # Set sensitivity
+    cfg.SIGMOID_SENSITIVITY = max(0.5, min(1.0 - (float(args.sensitivity) - 1.0), 1.5))
+
+    # Set overlap
+    cfg.SIG_OVERLAP = max(0.0, min(2.9, float(args.overlap)))
+
+    # Set result type
+    cfg.RESULT_TYPE = args.rtype.lower()    
+    if not cfg.RESULT_TYPE in ['table', 'audacity', 'r', 'csv']:
+        cfg.RESULT_TYPE = 'table'
+        
+    flist = []
+    for f in cfg.FILE_LIST:
+        flist.append((f, cfg.getConfig()))
+        
+    allsuccess=[]
+    allpaths=[]
+    
+
+    for entry in flist:
+        success,path=analyzeFile(entry)
+        allsuccess.append(success)
+        allpaths.append(path)
+
+        
+    return all(allsuccess),allpaths
 if __name__ == '__main__':
 
     # Freeze support for excecutable
@@ -446,14 +526,22 @@ if __name__ == '__main__':
     for f in cfg.FILE_LIST:
         flist.append((f, cfg.getConfig()))
 
+    allsuccess=[]
+    allpaths=[]
+
     # Analyze files   
     if cfg.CPU_THREADS < 2:
         for entry in flist:
-            analyzeFile(entry)
+            success,path=analyzeFile(entry)
+            allsuccess.append(success)
+            allpaths.append(path)
     else:
         with Pool(cfg.CPU_THREADS) as p:
-            p.map(analyzeFile, flist)
+            allresult=p.map(analyzeFile, flist)
+            allsuccess=[x[0] for x in allresult]
+            allpaths=[x[1] for x in allresult]
 
+    
 
     # A few examples to test
     # python3 analyze.py --i example/ --o example/ --slist example/ --min_conf 0.5 --threads 4

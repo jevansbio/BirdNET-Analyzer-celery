@@ -10,10 +10,10 @@ RANDOM_SEED = 42
 ##########################
 
 #MODEL_PATH = 'checkpoints/V2.2/BirdNET_GLOBAL_3K_V2.2_Model' # This will load the protobuf model
-MODEL_PATH = 'checkpoints/V2.2/BirdNET_GLOBAL_3K_V2.2_Model_FP32.tflite'
-MDATA_MODEL_PATH = 'checkpoints/V2.2/BirdNET_GLOBAL_3K_V2.2_MData_Model_FP16.tflite'
-LABELS_FILE = 'checkpoints/V2.2/BirdNET_GLOBAL_3K_V2.2_Labels.txt'
-TRANSLATED_LABELS_PATH = 'labels/V2.2'
+MODEL_PATH = '/checkpoints/V2.2/BirdNET_GLOBAL_3K_V2.2_Model_FP32.tflite'
+MDATA_MODEL_PATH = '/checkpoints/V2.2/BirdNET_GLOBAL_3K_V2.2_MData_Model_FP16.tflite'
+LABELS_FILE = '/checkpoints/V2.2/BirdNET_GLOBAL_3K_V2.2_Labels.txt'
+TRANSLATED_LABELS_PATH = '/labels/V2.2'
 
 ##################
 # Audio settings #
@@ -50,12 +50,12 @@ LOCATION_FILTER_THRESHOLD = 0.03
 # If None or empty file, no custom species list will be used
 # Note: Entries in this list have to match entries from the LABELS_FILE
 # We use the 2021 eBird taxonomy for species names (Clements list)
-CODES_FILE = 'eBird_taxonomy_codes_2021E.json'
+CODES_FILE = '/eBird_taxonomy_codes_2021E.json'
 SPECIES_LIST_FILE = 'example/species_list.txt' 
 
 # File input path and output path for selection tables
-INPUT_PATH = 'example/'
-OUTPUT_PATH = 'example/'
+INPUT_PATH = '/example/'
+OUTPUT_PATH = '/example/'
 
 # Number of threads to use for inference.
 # Can be as high as number of CPUs in your system

@@ -5,8 +5,8 @@ import traceback
 import numpy as np
 from multiprocessing import Pool
 
-import config as cfg
-import audio
+from . import  config as cfg
+from . import  audio
 
 # Set numpy random seed
 np.random.seed(cfg.RANDOM_SEED)

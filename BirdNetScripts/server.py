@@ -8,8 +8,8 @@ import tempfile
 
 from multiprocessing import freeze_support
 
-import config as cfg
-import analyze
+from . import  config as cfg
+from . import  analyze
 
 def clearErrorLog():
 

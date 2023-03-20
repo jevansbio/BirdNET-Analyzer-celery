@@ -7,9 +7,9 @@ import traceback
 
 from multiprocessing import Pool
 
-import config as cfg
-import analyze
-import model
+from . import  config as cfg
+from . import  analyze
+from . import  model
 
 def clearErrorLog():
 

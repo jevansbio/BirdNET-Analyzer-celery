@@ -2,9 +2,9 @@ import sys
 import os
 import argparse
 
-import config as cfg
-import analyze
-import model
+from . import  config as cfg
+from . import  analyze
+from . import  model
 
 def getSpeciesList(lat, lon, week, threshold=0.05, sort=False):
 

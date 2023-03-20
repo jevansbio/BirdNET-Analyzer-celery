@@ -7,7 +7,7 @@ import numpy as np
 import warnings
 warnings.filterwarnings("ignore")
 
-import config as cfg
+from . import  config as cfg
 
 # Import TFLite from runtrime or Tensorflow;
 # import Keras if protobuf model; 
