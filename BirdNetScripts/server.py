@@ -9,12 +9,15 @@ import tempfile
 from datetime import date, datetime
 from multiprocessing import freeze_support
 
+from . import  config as cfg
+from . import  analyze
+from . import species
+from . import utils
+
 import bottle
 
-import analyze
-import config as cfg
-import species
-import utils
+
+
 
 
 def resultPooling(lines: list[str], num_results=5, pmode="avg"):

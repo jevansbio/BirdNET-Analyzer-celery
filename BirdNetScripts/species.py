@@ -3,13 +3,9 @@
 Can be used to predict a species list using coordinates and weeks.
 """
 import argparse
-import os
-import sys
 
-import config as cfg
-import model
-import utils
-
+from . import  config as cfg
+from . import  model
 
 def getSpeciesList(lat: float, lon: float, week: int, threshold=0.05, sort=False) -> list[str]:
     """Predict a species list.

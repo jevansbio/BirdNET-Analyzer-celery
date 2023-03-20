@@ -5,7 +5,7 @@ import warnings
 
 import numpy as np
 
-import config as cfg
+from . import config as cfg
 import utils
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -153,14 +153,14 @@ def buildLinearClassifier(num_labels, input_size, hidden_units=0, dropout=0.0):
     return model
 
 
-def trainLinearClassifier(classifier, 
-                          x_train, 
-                          y_train, 
-                          epochs, 
-                          batch_size, 
-                          learning_rate, 
-                          val_split, 
-                          upsampling_ratio, 
+def trainLinearClassifier(classifier,
+                          x_train,
+                          y_train,
+                          epochs,
+                          batch_size,
+                          learning_rate,
+                          val_split,
+                          upsampling_ratio,
                           upsampling_mode,
                           train_with_mixup,
                           train_with_label_smoothing,

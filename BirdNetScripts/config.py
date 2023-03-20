@@ -10,12 +10,12 @@ RANDOM_SEED = 42
 ##########################
 
 MODEL_VESION = 'V2.4'
-PB_MODEL = 'checkpoints/V2.4/BirdNET_GLOBAL_6K_V2.4_Model'
+PB_MODEL = '/checkpoints/V2.4/BirdNET_GLOBAL_6K_V2.4_Model'
 # MODEL_PATH = PB_MODEL # This will load the protobuf model
-MODEL_PATH = 'checkpoints/V2.4/BirdNET_GLOBAL_6K_V2.4_Model_FP32.tflite'
-MDATA_MODEL_PATH = 'checkpoints/V2.4/BirdNET_GLOBAL_6K_V2.4_MData_Model_FP16.tflite'
-LABELS_FILE = 'checkpoints/V2.4/BirdNET_GLOBAL_6K_V2.4_Labels.txt'
-TRANSLATED_LABELS_PATH = 'labels/V2.4'
+MODEL_PATH = '/checkpoints/V2.4/BirdNET_GLOBAL_6K_V2.4_Model_FP32.tflite'
+MDATA_MODEL_PATH = '/checkpoints/V2.4/BirdNET_GLOBAL_6K_V2.4_MData_Model_FP16.tflite'
+LABELS_FILE = '/checkpoints/V2.4/BirdNET_GLOBAL_6K_V2.4_Labels.txt'
+TRANSLATED_LABELS_PATH = '/labels/V2.4'
 
 # Path to custom trained classifier
 # If None, no custom classifier will be used
@@ -29,17 +29,17 @@ CUSTOM_CLASSIFIER = None
 # We use a sample rate of 48kHz, so the model input size is 
 # (batch size, 48000 kHz * 3 seconds) = (1, 144000)
 # Recordings will be resampled automatically.
-SAMPLE_RATE: int = 48000 
+SAMPLE_RATE: int = 48000
 
 # We're using 3-second chunks
-SIG_LENGTH: float = 3.0 
+SIG_LENGTH: float = 3.0
 
 # Define overlap between consecutive chunks <3.0; 0 = no overlap
-SIG_OVERLAP: float = 0 
+SIG_OVERLAP: float = 0
 
 # Define minimum length of audio chunk for prediction, 
 # chunks shorter than 3 seconds will be padded with zeros
-SIG_MINLEN: float = 1.0 
+SIG_MINLEN: float = 1.0
 
 # Frequency range. This is model specific and should not be changed.
 SIG_FMIN = 0
@@ -61,28 +61,28 @@ LOCATION_FILTER_THRESHOLD = 0.03
 # If None or empty file, no custom species list will be used
 # Note: Entries in this list have to match entries from the LABELS_FILE
 # We use the 2021 eBird taxonomy for species names (Clements list)
-CODES_FILE = 'eBird_taxonomy_codes_2021E.json'
-SPECIES_LIST_FILE = 'example/species_list.txt' 
+CODES_FILE = '/eBird_taxonomy_codes_2021E.json'
+SPECIES_LIST_FILE = '/example/species_list.txt'
 
 # File input path and output path for selection tables
-INPUT_PATH: str = 'example/'
-OUTPUT_PATH: str = 'example/'
+INPUT_PATH: str = '/example/'
+OUTPUT_PATH: str = '/example/'
 
 ALLOWED_FILETYPES = ['wav', 'flac', 'mp3', 'ogg', 'm4a']
 
 # Number of threads to use for inference.
 # Can be as high as number of CPUs in your system
 CPU_THREADS: int = 8
-TFLITE_THREADS: int = 1 
+TFLITE_THREADS: int = 1
 
 # False will output logits, True will convert to sigmoid activations
-APPLY_SIGMOID: bool = True 
+APPLY_SIGMOID: bool = True
 SIGMOID_SENSITIVITY: float = 1.0
 
 # Minimum confidence score to include in selection table 
 # (be aware: if APPLY_SIGMOID = False, this no longer represents 
 # probabilities and needs to be adjusted)
-MIN_CONFIDENCE: float = 0.1 
+MIN_CONFIDENCE: float = 0.1
 
 # Number of samples to process at the same time. Higher values can increase
 # processing speed, but will also increase memory usage.
@@ -99,7 +99,7 @@ RESULT_TYPE = 'table'
 #####################
 
 # Training data path
-TRAIN_DATA_PATH = 'train_data/'
+TRAIN_DATA_PATH = '/train_data/'
 
 # Sample crop mode
 SAMPLE_CROP_MODE = 'center'

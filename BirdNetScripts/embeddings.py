@@ -8,9 +8,9 @@ from multiprocessing import Pool
 
 import numpy as np
 
-import analyze
-import config as cfg
-import model
+from . import analyze
+from . import config as cfg
+from . import model
 import utils
 
 
@@ -21,7 +21,7 @@ def writeErrorLog(msg):
 
 def saveAsEmbeddingsFile(results: dict[str], fpath: str):
     """Write embeddings to file
-    
+
     Args:
         results: A dictionary containing the embeddings at timestamp.
         fpath: The path for the embeddings file.
@@ -55,7 +55,7 @@ def analyzeFile(item):
         utils.writeErrorLog(ex)
 
         return
-    
+
     # If no chunks, show error and skip
     if len(chunks) == 0:
         msg = f"Error: Cannot open audio file {fpath}"

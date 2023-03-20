@@ -10,10 +10,10 @@ from multiprocessing import Pool, freeze_support
 
 import numpy as np
 
-import audio
-import config as cfg
-import model
-import species
+from . import audio
+from . import config as cfg
+from . import model
+from . import species
 import utils
 
 
@@ -355,6 +355,21 @@ def analyzeFile(item):
 
     return True
 
+class argsclass():
+    def __init__(self,args):
+        self.i=args.get("i","/example/")
+        self.o=args.get("o","/example/")
+        self.lat=args.get("lat",-1)
+        self.lon=args.get("lon",-1)
+        self.week=args.get("week",-1)
+        self.slist=args.get("slist","")
+        self.sensitivity=args.get("sensitivity",1.0)
+        self.min_conf=args.get("min_conf",0.1)
+        self.overlap=args.get("overlap",0.0)
+        self.rtype=args.get("rtype","csv")
+        self.locale=args.get("locale","en")
+        self.sf_thresh=args.get("sf_thresh",0.03)
+        self.classifier=args,get("classifier",None)
 
 if __name__ == "__main__":
     # Freeze support for executable

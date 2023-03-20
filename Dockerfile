@@ -7,6 +7,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg  && rm -
 # Install required Python packages
 RUN pip3 install numpy scipy librosa bottle resampy
 
+#celery libs
+RUN pip3 install celery==5.2.7 redis==4.3.3 hiredis==2.0.0
+
 # Install Tensforflow
 RUN pip3 install tensorflow 
 
@@ -14,5 +17,5 @@ RUN pip3 install tensorflow
 COPY . ./
 
 # Add entry point to run the script
-ENTRYPOINT [ "python3" ]
-CMD [ "analyze.py" ]
+#ENTRYPOINT [ "python3" ]
+#CMD [ "analyze.py" ]

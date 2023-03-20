@@ -8,10 +8,13 @@ import gradio as gr
 import librosa
 import webview
 
-import analyze
-import config as cfg
-import segments
-import species
+from multiprocessing import Pool, freeze_support
+
+from . import  config as cfg
+from . import  analyze
+from . import  model
+from . import segments
+from . import species
 import utils
 from train import trainModel
 

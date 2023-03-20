@@ -8,8 +8,8 @@ from multiprocessing import Pool
 
 import numpy as np
 
-import audio
-import config as cfg
+from . import  config as cfg
+from . import  audio
 import utils
 
 # Set numpy random seed
