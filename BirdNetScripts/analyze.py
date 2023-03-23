@@ -242,7 +242,7 @@ def analyzeFile(item):
         msg = 'Error: Cannot open audio file {}'.format(fpath)
         print(msg, flush=True)
         writeErrorLog(msg)
-        return False
+        return False, ""
 
     # Process each chunk
     try:
@@ -296,7 +296,7 @@ def analyzeFile(item):
         msg = 'Error: Cannot analyze audio file {}.\n{}'.format(fpath, traceback.format_exc())
         print(msg, flush=True)
         writeErrorLog(msg)
-        return False     
+        return False, ""     
 
     # Save as selection table
     try:
@@ -335,7 +335,7 @@ def analyzeFile(item):
         msg = 'Error: Cannot save result for {}.\n{}'.format(fpath, traceback.format_exc())
         print(msg, flush=True)
         writeErrorLog(msg)
-        return False
+        return False, ""
 
     delta_time = (datetime.datetime.now() - start_time).total_seconds()
     print('Finished {} in {:.2f} seconds'.format(fpath, delta_time), flush=True)
@@ -403,7 +403,9 @@ def RunAnalysis(args):
         cfg.RESULT_TYPE = 'table'
         
     flist = []
+    allfilenames=[]
     for f in cfg.FILE_LIST:
+        allfilenames.append(f)
         flist.append((f, cfg.getConfig()))
         
     allsuccess=[]
@@ -415,8 +417,9 @@ def RunAnalysis(args):
         allsuccess.append(success)
         allpaths.append(path)
 
-        
-    return all(allsuccess),allpaths
+    
+    
+    return all(allsuccess),(allpaths,allfilenames)
 if __name__ == '__main__':
 
     # Freeze support for excecutable

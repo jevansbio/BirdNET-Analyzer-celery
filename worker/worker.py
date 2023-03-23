@@ -18,5 +18,5 @@ def add(x, y):
     
 @app.task(name='AnalysisTask')  # Named task
 def BirdnetAnalysis(args):
-    allsucces, allpaths = bn.RunAnalysis(args)
-    return (allsucces, allpaths)
+    allsucces, allresults = bn.RunAnalysis(args)
+    return (allsucces, allresults)
