@@ -346,6 +346,7 @@ def analyzeFile(item):
 
     except Exception as ex:
         # Write error log
+        print(ex)
         print(f"Error: Cannot save result for {fpath}.\n", flush=True)
         utils.writeErrorLog(ex)
 
@@ -371,6 +372,8 @@ class argsclass():
         self.locale=args.get("locale","en")
         self.sf_thresh=args.get("sf_thresh",0.03)
         self.classifier=args.get("classifier",None)
+        self.threads=args.get('threads',4)
+        self.batchsize=args.get('threads',1)
 
 def RunAnalysis(args):
     args = argsclass(args)
