@@ -267,7 +267,7 @@ def analyzeFile(item):
         print(f"Error: Cannot open audio file {fpath}", flush=True)
         utils.writeErrorLog(ex)
 
-        return False
+        return False, ""
 
     # Process each chunk
     try:
@@ -318,7 +318,7 @@ def analyzeFile(item):
         print(f"Error: Cannot analyze audio file {fpath}.\n", flush=True)
         utils.writeErrorLog(ex)
 
-        return False
+        return False, ""
 
     # Save as selection table
     try:
@@ -338,9 +338,10 @@ def analyzeFile(item):
                 rtype = ".BirdNET.results.txt"
             else:
                 rtype = ".BirdNET.results.csv"
-
-            saveResultFile(results, os.path.join(cfg.OUTPUT_PATH, rpath.rsplit(".", 1)[0] + rtype), fpath)
+            outputpath = os.path.join(cfg.OUTPUT_PATH, rpath.rsplit('.', 1)[0] + rtype)
+            saveResultFile(results, outputpath, fpath)
         else:
+            outputpath = cfg.OUTPUT_PATH
             saveResultFile(results, cfg.OUTPUT_PATH, fpath)
 
     except Exception as ex:
@@ -348,12 +349,12 @@ def analyzeFile(item):
         print(f"Error: Cannot save result for {fpath}.\n", flush=True)
         utils.writeErrorLog(ex)
 
-        return False
+        return False, ""
 
     delta_time = (datetime.datetime.now() - start_time).total_seconds()
     print("Finished {} in {:.2f} seconds".format(fpath, delta_time), flush=True)
 
-    return True
+    return True, outputpath
 
 class argsclass():
     def __init__(self,args):
@@ -369,7 +370,119 @@ class argsclass():
         self.rtype=args.get("rtype","csv")
         self.locale=args.get("locale","en")
         self.sf_thresh=args.get("sf_thresh",0.03)
-        self.classifier=args,get("classifier",None)
+        self.classifier=args.get("classifier",None)
+
+def RunAnalysis(args):
+    args = argsclass(args)
+    # Set paths relative to script path (requested in #3)
+    script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+    cfg.MODEL_PATH = os.path.join(script_dir, cfg.MODEL_PATH)
+    cfg.LABELS_FILE = os.path.join(script_dir, cfg.LABELS_FILE)
+    cfg.TRANSLATED_LABELS_PATH = os.path.join(script_dir, cfg.TRANSLATED_LABELS_PATH)
+    cfg.MDATA_MODEL_PATH = os.path.join(script_dir, cfg.MDATA_MODEL_PATH)
+    cfg.CODES_FILE = os.path.join(script_dir, cfg.CODES_FILE)
+    cfg.ERROR_LOG_FILE = os.path.join(script_dir, cfg.ERROR_LOG_FILE)
+
+    # Load eBird codes, labels
+    cfg.CODES = loadCodes()
+    cfg.LABELS = utils.readLines(cfg.LABELS_FILE)
+
+    # Set custom classifier?
+    if args.classifier is not None:
+        cfg.CUSTOM_CLASSIFIER = args.classifier  # we treat this as absolute path, so no need to join with dirname
+        cfg.LABELS_FILE = args.classifier.replace(".tflite", "_Labels.txt")  # same for labels file
+        cfg.LABELS = utils.readLines(cfg.LABELS_FILE)
+        args.lat = -1
+        args.lon = -1
+        args.locale = "en"
+
+    # Load translated labels
+    lfile = os.path.join(
+        cfg.TRANSLATED_LABELS_PATH, os.path.basename(cfg.LABELS_FILE).replace(".txt", "_{}.txt".format(args.locale))
+    )
+
+    if not args.locale in ["en"] and os.path.isfile(lfile):
+        cfg.TRANSLATED_LABELS = utils.readLines(lfile)
+    else:
+        cfg.TRANSLATED_LABELS = cfg.LABELS
+
+    ### Make sure to comment out appropriately if you are not using args. ###
+
+    # Load species list from location filter or provided list
+    cfg.LATITUDE, cfg.LONGITUDE, cfg.WEEK = args.lat, args.lon, args.week
+    cfg.LOCATION_FILTER_THRESHOLD = max(0.01, min(0.99, float(args.sf_thresh)))
+
+    if cfg.LATITUDE == -1 and cfg.LONGITUDE == -1:
+        if not args.slist:
+            cfg.SPECIES_LIST_FILE = None
+        else:
+            cfg.SPECIES_LIST_FILE = os.path.join(script_dir, args.slist)
+
+            if os.path.isdir(cfg.SPECIES_LIST_FILE):
+                cfg.SPECIES_LIST_FILE = os.path.join(cfg.SPECIES_LIST_FILE, "species_list.txt")
+
+        cfg.SPECIES_LIST = utils.readLines(cfg.SPECIES_LIST_FILE)
+    else:
+        cfg.SPECIES_LIST_FILE = None
+        cfg.SPECIES_LIST = species.getSpeciesList(cfg.LATITUDE, cfg.LONGITUDE, cfg.WEEK, cfg.LOCATION_FILTER_THRESHOLD)
+
+    if not cfg.SPECIES_LIST:
+        print(f"Species list contains {len(cfg.LABELS)} species")
+    else:
+        print(f"Species list contains {len(cfg.SPECIES_LIST)} species")
+
+    # Set input and output path
+    cfg.INPUT_PATH = args.i
+    cfg.OUTPUT_PATH = args.o
+
+    # Parse input files
+    if os.path.isdir(cfg.INPUT_PATH):
+        cfg.FILE_LIST = utils.collect_audio_files(cfg.INPUT_PATH)
+        print(f"Found {len(cfg.FILE_LIST)} files to analyze")
+    else:
+        cfg.FILE_LIST = [cfg.INPUT_PATH]
+
+    # Set confidence threshold
+    cfg.MIN_CONFIDENCE = max(0.01, min(0.99, float(args.min_conf)))
+
+    # Set sensitivity
+    cfg.SIGMOID_SENSITIVITY = max(0.5, min(1.0 - (float(args.sensitivity) - 1.0), 1.5))
+
+    # Set overlap
+    cfg.SIG_OVERLAP = max(0.0, min(2.9, float(args.overlap)))
+
+    # Set result type
+    cfg.RESULT_TYPE = args.rtype.lower()
+
+    if not cfg.RESULT_TYPE in ["table", "audacity", "r", "kaleidoscope", "csv"]:
+        cfg.RESULT_TYPE = "table"
+
+    # Set number of threads
+    if os.path.isdir(cfg.INPUT_PATH):
+        cfg.CPU_THREADS = max(1, int(args.threads))
+        cfg.TFLITE_THREADS = 1
+    else:
+        cfg.CPU_THREADS = 1
+        cfg.TFLITE_THREADS = max(1, int(args.threads))
+
+    # Set batch size
+    cfg.BATCH_SIZE = max(1, int(args.batchsize))
+
+    # Add config items to each file list entry.
+    # We have to do this for Windows which does not
+    # support fork() and thus each process has to
+    # have its own config. USE LINUX!
+    flist = [(f, cfg.getConfig()) for f in cfg.FILE_LIST]
+
+    allsuccess=[]
+    allpaths = []
+
+    for entry in flist:
+        success, path = analyzeFile(entry)
+        allsuccess.append(success)
+        allpaths.append(path)
+
+    return all(allsuccess),(allpaths,flist)
 
 if __name__ == "__main__":
     # Freeze support for executable
