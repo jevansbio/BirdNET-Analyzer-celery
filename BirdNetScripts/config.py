@@ -50,7 +50,7 @@ SIG_FMAX = 15000
 #####################
 
 LATITUDE = -1
-LONGITUDE = -1f
+LONGITUDE = -1
 WEEK = -1
 LOCATION_FILTER_THRESHOLD = 0.03
 
@@ -150,7 +150,7 @@ CODES = {}
 LABELS: list[str] = []
 TRANSLATED_LABELS: list[str] = []
 SPECIES_LIST: list[str] = []
-ERROR_LOG_FILE: str = 'error_log.txt'
+ERROR_LOG_FILE: str = '/error_log.txt'
 FILE_LIST = []
 FILE_STORAGE_PATH = ''
 
