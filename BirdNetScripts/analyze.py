@@ -14,7 +14,7 @@ from . import audio
 from . import config as cfg
 from . import model
 from . import species
-import utils
+from . import utils
 
 
 def loadCodes():

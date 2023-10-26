@@ -7,10 +7,10 @@ import os
 
 import numpy as np
 
-import audio
-import config as cfg
-import model
-import utils
+from . import audio
+from . import config as cfg
+from . import model
+from . import utils
 
 
 def _loadTrainingData(cache_mode="none", cache_file=""):
