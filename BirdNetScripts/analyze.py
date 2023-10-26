@@ -322,14 +322,19 @@ def analyzeFile(item):
 
     # Save as selection table
     try:
+        print(cfg.OUTPUT_PATH)
+        print(cfg.INPUT_PATH)
         # We have to check if output path is a file or directory
         if not cfg.OUTPUT_PATH.rsplit(".", 1)[-1].lower() in ["txt", "csv"]:
             rpath = fpath.replace(cfg.INPUT_PATH, "")
-            rpath = rpath[1:] if rpath[0] in ["/", "\\"] else rpath
+            if rpath != '':
+                rpath = rpath[1:] if rpath[0] in ["/", "\\"] else rpath
+                rdir = os.path.join(cfg.OUTPUT_PATH, os.path.dirname(rpath))
+            else:
+                rpath = os.path.split(fpath)[1]
+                rdir = cfg.OUTPUT_PATH
 
             # Make target directory if it doesn't exist
-            rdir = os.path.join(cfg.OUTPUT_PATH, os.path.dirname(rpath))
-
             os.makedirs(rdir, exist_ok=True)
 
             if cfg.RESULT_TYPE == "table":
@@ -477,15 +482,16 @@ def RunAnalysis(args):
     # have its own config. USE LINUX!
     flist = [(f, cfg.getConfig()) for f in cfg.FILE_LIST]
 
-    allsuccess=[]
+    allsuccess = []
     allpaths = []
+
 
     for entry in flist:
         success, path = analyzeFile(entry)
         allsuccess.append(success)
         allpaths.append(path)
 
-    return all(allsuccess),(allpaths,flist)
+    return all(allsuccess),(allpaths,cfg.FILE_LIST)
 
 if __name__ == "__main__":
     # Freeze support for executable
