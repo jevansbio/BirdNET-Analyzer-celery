@@ -1,22 +1,19 @@
 import concurrent.futures
 import os
 import sys
-from multiprocessing import freeze_support
 from pathlib import Path
 
 import gradio as gr
 import librosa
 import webview
 
-from multiprocessing import Pool, freeze_support
+from multiprocessing import freeze_support
 
-from . import  config as cfg
+from . import config as cfg, utils
 from . import  analyze
-from . import  model
 from . import segments
 from . import species
-import utils
-from train import trainModel
+from BirdNetScripts.train import trainModel
 
 _WINDOW: webview.Window
 OUTPUT_TYPE_MAP = {"Raven selection table": "table", "Audacity": "audacity", "R": "r", "CSV": "csv"}

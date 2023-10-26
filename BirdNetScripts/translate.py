@@ -8,9 +8,7 @@ import json
 import os
 import urllib.request
 
-from . import  config as cfg
-from . import  analyze
-import utils
+from . import config as cfg, utils
 
 LOCALES = ['af', 'ar', 'cs', 'da', 'de', 'es', 'fi', 'fr', 'hu', 'it', 'ja', 'ko', 'nl', 'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'th', 'tr', 'uk', 'zh']
 """ Locales for 25 common languages (according to GitHub Copilot) """

@@ -5,8 +5,7 @@ import warnings
 
 import numpy as np
 
-from . import config as cfg
-import utils
+from . import config as cfg, utils
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["CUDA_VISIBLE_DEVICES"] = ""

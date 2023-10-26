@@ -5,7 +5,7 @@ import traceback
 import numpy as np
 from pathlib import Path
 
-import config as cfg
+from . import config as cfg
 
 
 def collect_audio_files(path: str):

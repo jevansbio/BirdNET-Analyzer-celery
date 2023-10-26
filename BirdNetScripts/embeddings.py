@@ -8,10 +8,9 @@ from multiprocessing import Pool
 
 import numpy as np
 
-from . import analyze
+from . import analyze, utils
 from . import config as cfg
 from . import model
-import utils
 
 
 def writeErrorLog(msg):
