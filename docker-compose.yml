@@ -15,3 +15,7 @@ services:
 volumes:
   exportdir:
       external: true
+networks:
+  network1:
+    name: arisemds_vm_scripts_default
+    external: true
