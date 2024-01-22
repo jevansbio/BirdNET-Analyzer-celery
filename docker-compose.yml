@@ -3,7 +3,7 @@ services:
   birdnet-celery:
     birdnet:
       build:
-        context: /home/jevans/scripts/BirdNET-Analyzer-celery
+        context: .
       image: birdnet
       command: bash -c "celery -A worker.worker worker --autoscale 10,1 --loglevel=INFO -Q birdnet"
       restart: always  
