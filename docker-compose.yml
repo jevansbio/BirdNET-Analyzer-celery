@@ -1,17 +1,17 @@
 version: "3"
 services:
   birdnet-celery:
-    birdnet:
-      build:
-        context: .
-      image: birdnet
-      command: bash -c "celery -A worker.worker worker --autoscale 10,1 --loglevel=INFO -Q birdnet"
-      restart: always  
-      volumes:
-        - /ibed/arise/exportdir:/media/exportdir
-      environment: 
-        - CELERY_BROKER=redis://redis:6379/0
-        - CELERY_BACKEND=redis://redis:6379/0
+  
+    build:
+      context: .
+    image: birdnet
+    command: bash -c "celery -A worker.worker worker --autoscale 10,1 --loglevel=INFO -Q birdnet"
+    restart: always  
+    volumes:
+      - /ibed/arise/exportdir:/media/exportdir
+    environment: 
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
 volumes:
   exportdir:
       external: true
