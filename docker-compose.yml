@@ -5,7 +5,7 @@ services:
     build:
       context: .
     image: birdnet
-    command: bash -c "celery -A worker.worker worker --autoscale 10,1 --loglevel=INFO -Q birdnet"
+    command: bash -c "celery -A worker.worker worker --autoscale 5,1 --loglevel=INFO -Q birdnet"
     restart: always  
     volumes:
       - /ibed/arise/exportdir:/media/exportdir
